@@ -18,9 +18,11 @@ function crackExeFile(originalExePath, argvOption) {
 
     const exeData = readFileSync(originalExePath);
     const isHighetVersion = version >= '7.38.0.1';
-    const targetSignature = isHighetVersion
-         ? Buffer.from([0xC7, 0x86, 0x18, 0x01, 0x00, 0x00, 0x98, 0x00])
-         : Buffer.from([0xC7, 0x87, 0x18, 0x01, 0x00, 0x00, 0x00, 0x00]);
+    // const targetSignature = isHighetVersion
+    //      ? Buffer.from([0xC7, 0x86, 0x18, 0x01, 0x00, 0x00, 0x98, 0x00])
+    //      : Buffer.from([0xC7, 0x87, 0x18, 0x01, 0x00, 0x00, 0x00, 0x00]);
+    // v7.43
+    const targetSignature = Buffer.from([0xC7, 0x86, 0x20, 0x01, 0x00, 0x00, 0x98, 0x00]);
 
     const signatureIndex = exeData.indexOf(targetSignature);
     if (signatureIndex === -1) {
@@ -29,6 +31,8 @@ function crackExeFile(originalExePath, argvOption) {
     }
 
     if (isHighetVersion) {
+        // 0x1B20 ent
+        // 0x03D4 pro
         let writeValue = argvOption === '2' ? 0x1B20 : 0x03D4;
         exeData.writeUInt16LE(writeValue, signatureIndex + 6);
     } else {
